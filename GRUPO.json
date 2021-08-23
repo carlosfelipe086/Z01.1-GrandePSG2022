@@ -1,3 +1,10 @@
 {
-  "Nome-Grupo": "GrandePSG2022"
+  "Nome-Grupo": "GrandePSG2022",
+
+  "aluno-1": {
+    "nome": "Eduardo Araujo Rodrigues da Cunha",
+    "email-insper": "eduardoarc@al.insper.edu.br",
+    "user-github": "eduardoarcunha"
+  }
+
 }
