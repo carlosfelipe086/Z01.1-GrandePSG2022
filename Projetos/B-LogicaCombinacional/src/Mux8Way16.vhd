@@ -26,5 +26,6 @@ begin
 		 f when (sel = "101") else
 		 g when (sel = "110") else
 		 h;
+		 
 
 end architecture;
