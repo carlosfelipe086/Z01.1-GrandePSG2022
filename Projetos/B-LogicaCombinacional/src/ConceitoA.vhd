@@ -54,9 +54,8 @@ end component;
 -- signals
 --------------
 
-	signal 	clk : std_logic;
-	signal reset: std_logic;
-	signal carry: std_logic_vector(19 downto 0);
+
+	signal carry: std_logic_vector(11 downto 0);
 
 
 ---------------
@@ -67,14 +66,14 @@ begin
 	binarioBcd0 : binarioToBcd
 	port map 
 	(		
-		clk => clk,
-		reset => reset,
+		clk => CLOCK_50,
+		reset => '0',
         binary_in => SW,
         bcd0 => carry(3 downto 0),
         bcd1 => carry(7 downto 4),
-        bcd2 => carry(11 downto 8),
-        bcd3 => carry(15 downto 12),
-		bcd4 => carry(19 downto 16)
+		bcd2 => carry(11 downto 8),
+		bcd3 => OPEN,
+		bcd4 => OPEN
 	);
 
 	
