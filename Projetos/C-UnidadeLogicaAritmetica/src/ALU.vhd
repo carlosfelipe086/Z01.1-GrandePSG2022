@@ -28,16 +28,17 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity ALU is
     port (
-            x,y:   in STD_LOGIC_VECTOR(15 downto 0); -- entradas de dados da ALU
-            zx:    in STD_LOGIC;                     -- zera a entrada x
-            nx:    in STD_LOGIC;                     -- inverte a entrada x
-            zy:    in STD_LOGIC;                     -- zera a entrada y
-            ny:    in STD_LOGIC;                     -- inverte a entrada y
-            f:     in STD_LOGIC;                     -- se 0 calcula x & y, senão x + y
-            no:    in STD_LOGIC;                     -- inverte o valor da saída
-            zr:    out STD_LOGIC;                    -- setado se saída igual a zero
-            ng:    out STD_LOGIC;                    -- setado se saída é negativa
-            saida: out STD_LOGIC_VECTOR(15 downto 0) -- saída de dados da ALU
+            x,y:   in STD_LOGIC_VECTOR(15 downto 0);  -- entradas de dados da ALU
+            zx:    in STD_LOGIC;                      -- zera a entrada x
+            nx:    in STD_LOGIC;                      -- inverte a entrada x
+            zy:    in STD_LOGIC;                      -- zera a entrada y
+            ny:    in STD_LOGIC;                      -- inverte a entrada y
+            f:     in STD_LOGIC_VECTOR(1 downto 0);   -- se 0 calcula x & y, se 1 x + y, se 10 x xor y
+            no:    in STD_LOGIC;                      -- inverte o valor da saída
+            zr:    out STD_LOGIC;                     -- setado se saída igual a zero
+            ng:    out STD_LOGIC;                     -- setado se saída é negativa
+            saida: out STD_LOGIC_VECTOR(15 downto 0); -- saída de dados da ALU
+            estouro: out STD_LOGIC                   -- estouro da soma
     );
 end entity;
 
@@ -64,9 +65,10 @@ architecture  rtl OF alu is
     
     component Add16 is
         port(
-             a   :  in STD_LOGIC_VECTOR(15 downto 0);
-             b   :  in STD_LOGIC_VECTOR(15 downto 0);
-             q   :  out STD_LOGIC_VECTOR(15 downto 0)
+             a       :  in STD_LOGIC_VECTOR(15 downto 0);
+             b       :  in STD_LOGIC_VECTOR(15 downto 0);
+             q       :  out STD_LOGIC_VECTOR(15 downto 0);
+             e       : out STD_LOGIC
         );
     end component;
 
@@ -78,6 +80,14 @@ architecture  rtl OF alu is
         );
     end component;
 
+    component XOR16 is
+        port(
+            a   :  in  STD_LOGIC_VECTOR(15 downto 0);
+            b   :  in  STD_LOGIC_VECTOR(15 downto 0);
+            q   :  out STD_LOGIC_VECTOR(15 downto 0)
+        );
+    end component;
+
     component comparador16 is
         port(
              a   :  in STD_LOGIC_VECTOR(15 downto 0);
@@ -86,16 +96,18 @@ architecture  rtl OF alu is
         );
     end component;
 
-    component Mux16 is
+    component Mux16_2 is
         port (
              a   :  in  STD_LOGIC_VECTOR(15 downto 0);
              b   :  in  STD_LOGIC_VECTOR(15 downto 0);
-             sel :  in  STD_LOGIC;
+             c   :  in  STD_LOGIC_VECTOR(15 downto 0);
+             sel :  in  STD_LOGIC_VECTOR(1 downto 0);
              q   :  out STD_LOGIC_VECTOR(15 downto 0)
         );
     end component;
 
-   SIGNAL zxout,zyout,nxout,nyout,andout,adderout,muxout,precomp: std_logic_vector(15 downto 0);
+   SIGNAL zxout,zyout,nxout,nyout,andout,adderout,xorout,muxout,precomp: std_logic_vector(15 downto 0);
+   SIGNAL e: std_logic;
 
 begin
 
@@ -104,11 +116,14 @@ begin
     negadorX     :  inversor16   PORT MAP (nx, zxout, nxout); 
     zeradorY     :  zerador16    PORT MAP (zy, y, zyout); 
     negadorY     :  inversor16   PORT MAP (ny, zyout, nyout); 
-    addXY        :  Add16        PORT MAP (nxout, nyout, adderout);
+    addXY        :  Add16        PORT MAP (nxout, nyout, adderout,e);
     andXY        :  And16        PORT MAP (nxout, nyout, andout); 
-    selectAddAnd :  Mux16        PORT MAP (andout, adderout, f, muxout); 
+    xorXY        :  XOR16        PORT MAP (nxout, nyout, xorout);
+    selectAddAnd :  Mux16_2      PORT MAP (andout, adderout,xorout, f, muxout); 
     negadorMux   :  inversor16   PORT MAP (no, muxout, precomp); 
     comparador   :  comparador16 PORT MAP (precomp, zr, ng);
+
     saida       <=  precomp;
+    estouro     <= e;
 
 end architecture;
