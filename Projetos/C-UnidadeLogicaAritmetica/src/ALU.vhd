@@ -34,6 +34,7 @@ entity ALU is
             zy:    in STD_LOGIC;                      -- zera a entrada y
             ny:    in STD_LOGIC;                      -- inverte a entrada y
             f:     in STD_LOGIC_VECTOR(1 downto 0);   -- se 0 calcula x & y, se 1 x + y, se 10 x xor y
+            s:     in STD_LOGIC_VECTOR(1 downto 0);   -- se realiza ou não operações shift (00 - não, 01 a direita, 10 a esquerda)
             no:    in STD_LOGIC;                      -- inverte o valor da saída
             zr:    out STD_LOGIC;                     -- setado se saída igual a zero
             ng:    out STD_LOGIC;                     -- setado se saída é negativa
@@ -106,7 +107,15 @@ architecture  rtl OF alu is
         );
     end component;
 
-   SIGNAL zxout,zyout,nxout,nyout,andout,adderout,xorout,muxout,precomp: std_logic_vector(15 downto 0);
+    component Shift16 is
+        port (
+             a:   in  STD_LOGIC_VECTOR(15 downto 0);
+			 sel: in  STD_LOGIC_VECTOR(1 downto 0);
+			 q:   out STD_LOGIC_VECTOR(15 downto 0)
+        );
+    end component;
+
+   SIGNAL zxout,zyout,nxout,nyout,andout,adderout,xorout,muxout,preshift, precomp: std_logic_vector(15 downto 0);
    SIGNAL e: std_logic;
 
 begin
@@ -120,7 +129,8 @@ begin
     andXY        :  And16        PORT MAP (nxout, nyout, andout); 
     xorXY        :  XOR16        PORT MAP (nxout, nyout, xorout);
     selectAddAnd :  Mux16_2      PORT MAP (andout, adderout,xorout, f, muxout); 
-    negadorMux   :  inversor16   PORT MAP (no, muxout, precomp); 
+    negadorMux   :  inversor16   PORT MAP (no, muxout, preshift); 
+    shift        :  Shift16       PORT MAP (preshift, s, precomp);
     comparador   :  comparador16 PORT MAP (precomp, zr, ng);
 
     saida       <=  precomp;
