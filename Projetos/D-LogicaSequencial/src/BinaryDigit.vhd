@@ -41,8 +41,8 @@ begin
 	b1: Mux2way
 	port map
 	(
-		a => input,
-		b => dffout,
+		a => dffout,
+		b => input,
 		sel => load, 
 		q => muxout
 	);
@@ -57,8 +57,6 @@ begin
 		q => dffout
 	);
 	
-	process(clock) begin
 	output <= dffout;
-	end process;
 
 end architecture;
