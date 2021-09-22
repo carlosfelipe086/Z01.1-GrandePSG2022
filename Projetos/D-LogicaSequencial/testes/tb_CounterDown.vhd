@@ -35,8 +35,18 @@ begin
 
     -- IMPLEMENTE AQUI!
     wait until clk'event and clk='0';
-		assert(Q = "111")  report "Precisa fazer os testes" severity error;
-
+    assert(Q = "111")  report "Precisa fazer os testes" severity error;
+    
+    wait until clk'event and clk='0';
+    assert(Q = "110")  report "Precisa fazer os testes" severity error;
+    
+    wait until clk'event and clk='0';
+    assert(Q = "101")  report "Precisa fazer os testes" severity error;
+    
+    wait until clk'event and clk='0';
+    assert(Q = "100")  report "Precisa fazer os testes" severity error;
+    
+  
 
     -- finish
     wait until clk'event and clk='0';
