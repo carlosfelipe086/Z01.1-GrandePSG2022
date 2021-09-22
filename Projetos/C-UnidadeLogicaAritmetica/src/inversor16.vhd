@@ -21,7 +21,7 @@ architecture rtl of inversor16 is
 begin
   -- Implementação vem aqui!
 
-  process (z,a,y)
+  process (z,a)
   begin
 
     if z = '0' then
