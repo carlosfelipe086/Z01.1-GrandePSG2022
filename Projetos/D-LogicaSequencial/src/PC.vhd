@@ -35,6 +35,15 @@ architecture arch of PC is
           );
   end component;
 
+  component Mux16 is
+    port (
+        a: in STD_LOGIC_VECTOR(15 downto 0);
+        b: in STD_LOGIC_VECTOR(15 downto 0);
+        sel: in STD_LOGIC;
+        q: out STD_LOGIC_VECTOR(15 downto 0)
+    );
+  end component;
+
   component Register16 is
       port(
           clock:   in STD_LOGIC;
@@ -44,7 +53,15 @@ architecture arch of PC is
         );
     end component;
 
+    signal incout,q0,q1,q2,regout: STD_LOGIC_VECTOR(15 downto 0);
+
 begin
 
+    inc:  Inc16 port map ( a => regout, q=> incout);
+	mux0:  Mux16 port map ( a => regout, b=> incout, sel=> increment, q => q0);
+	mux1:  Mux16 port map ( a => q0, b => input, sel => load, q => q1);
+	mux2:  Mux16 port map (a => q1, b => x"0000",sel => reset,q => q2);
+	reg:  Register16 port map ( clock => clock, input => q2 , load => '1', output => regout);
+	output <= regout; 	
 
 end architecture;
