@@ -26,4 +26,40 @@
 ;  RAM[14] = `?`
 ;  RAM[15] = NULL = 0x0000
 
+leaw $0, %A
+movw %A, %D
+movw %D, (%A)
 
+leaw $7, %A
+movw %A, %D
+leaw $2, %A
+movw %D, (%A)
+
+
+LOOP:
+; Contador da Ram
+leaw $2, %A
+movw (%A), %D
+incw %D
+movw %D, (%A)
+
+;Verifica Ram Atual
+leaw $2, %A
+movw (%A), %D
+movw %D, %A
+movw (%A), %D
+leaw $END, %A
+je %D
+nop
+
+;  Contador 
+leaw $0, %A
+movw (%A), %D
+addw (%A), $1, %D
+movw %D, (%A)
+leaw $LOOP, %A
+jmp %D
+nop
+
+
+END:
