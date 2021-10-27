@@ -67,12 +67,12 @@ architecture arch of CPU is
 
   component ControlUnit is
     port(
-      instruction                 : in STD_LOGIC_VECTOR(17 downto 0);
-      zr,ng                       : in STD_LOGIC;
-      muxALUI_A                   : out STD_LOGIC;
-      muxAM                       : out STD_LOGIC;
-      zx, nx, zy, ny, f, no       : out STD_LOGIC;
-      loadA, loadD, loadM, loadPC : out STD_LOGIC
+      instruction                        : in STD_LOGIC_VECTOR(17 downto 0);
+      zr,ng                              : in STD_LOGIC;
+      muxALUI_A                          : out STD_LOGIC;
+      muxAM,muxDS                        : out STD_LOGIC;
+      zx, nx, zy, ny, f, no              : out STD_LOGIC;
+      loadA, loadD, loadM, loadPC, loadS : out STD_LOGIC
       );
   end component;
 
@@ -96,13 +96,19 @@ architecture arch of CPU is
   signal s_regDout: STD_LOGIC_VECTOR(15 downto 0);
   signal s_ALUout: STD_LOGIC_VECTOR(15 downto 0);
 
+  --conceitoB
+  signal s_regSout: STD_LOGIC_VECTOR(15 downto 0);
+  signal c_loadS: STD_LOGIC;
+  signal c_muxDS: STD_LOGIC;
+  signal s_muxDS_out: STD_LOGIC_VECTOR(15 downto 0);
+
   signal s_pcout: STD_LOGIC_VECTOR(15 downto 0);
 
 begin
 Ula: ALU
 	port map
 	(
-		x  => s_regDout ,
+		x  => s_muxDS_out ,
 		y => s_muxAM_out,
 		zx => c_zx,
     nx => c_nx,
@@ -131,7 +137,17 @@ Ula: ALU
 		input => s_muxALUI_Aout,
     load => c_loadA,
     output =>s_regAout 
-	);
+  );
+  --conceitoB
+  Registrador_S : Register16
+	port map
+	(
+		clock  => clock ,
+		input => s_ALUout,
+    load => c_loadS,
+    output =>s_regSout 
+  );
+
   MuxALUI_A : Mux16
 	port map
 	(
@@ -147,7 +163,17 @@ Ula: ALU
     b => inM,
     sel =>  c_muxAM,
     q => s_muxAM_out
-	);
+  );
+
+  Mux_DS : Mux16
+	port map
+	(
+		a => s_regDout,
+    b => s_regSout,
+    sel =>  c_muxDS,
+    q => s_muxDS_out
+  );
+  
   PC1 : pc
   port map
   (
@@ -163,11 +189,12 @@ Ula: ALU
   CU : ControlUnit
   port map
   (
-     instruction    => instruction,
+    instruction    => instruction,
     zr  => c_zr, 
     ng=>c_ng,
     muxALUI_A  => c_muxALUI_A,
     muxAM     => c_muxAM,
+    muxDS     => c_muxDS,
     zx => c_zx,
     nx => c_nx,
     zy => c_zy,
@@ -177,7 +204,8 @@ Ula: ALU
     loadA => c_loadA,
     loadD => c_loadD,
     loadM => writeM,
-    loadPC => c_loadPC
+    loadPC => c_loadPC,
+    loadS => c_loadS
   );
   outM <=  s_ALUout;
   addressM <=s_regAout(14 downto 0) ;
