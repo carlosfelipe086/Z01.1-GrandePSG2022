@@ -35,7 +35,7 @@ end component;
 --------------
 -- signals
 --------------
-
+signal teste: std_logic_vector(3 downto 0) := "00" & SW(9 downto 8);
 ---------------
 -- implementacao
 ---------------
@@ -57,7 +57,7 @@ begin
 	seven2 : sevenSeg
 	port map 
 	(
-			bcd => "00" & SW(9 downto 8),
+			bcd => teste,
 			leds => HEX2
 	);
 
