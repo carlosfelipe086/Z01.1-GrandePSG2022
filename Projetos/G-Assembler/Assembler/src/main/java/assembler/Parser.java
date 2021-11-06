@@ -89,6 +89,21 @@ public class Parser {
      */
     public CommandType commandType(String command) {
         /* TODO: implementar */
+        int tamanho = command.length();
+        int ultimoTermo = tamanho - 1;
+
+        char comandoC = command.charAt(ultimoTermo);
+        char comandoL = command.charAt(0);
+
+        if (comandoC == ':') {
+            return CommandType.L_COMMAND;
+        }
+        if (comandoL == 'l') {
+            return CommandType.A_COMMAND;
+        }
+        if (comandoL != 'l') {
+            return CommandType.C_COMMAND;
+        }
     	return null;
     }
 
@@ -100,7 +115,18 @@ public class Parser {
      */
     public String symbol(String command) {
         /* TODO: implementar */
-    	return null;
+        int posicaoInicial = 0;
+        int posicaoFinal = 0;
+        for(int i = 0; i <= command.length(); i++) {
+            char x = command.charAt(i);
+            if (x == '$') {
+                posicaoInicial += i;
+            }
+            if (x == ',') {
+                posicaoFinal += i;
+            }
+        }
+        return command.substring(posicaoInicial,posicaoFinal);
     }
 
     /**
@@ -111,7 +137,15 @@ public class Parser {
      */
     public String label(String command) {
         /* TODO: implementar */
-    	return null;
+        int posicaoInicial = 0;
+        int posicaoFinal = 0;
+        for(int i = 0; i <= command.length(); i++) {
+            char x = command.charAt(i);
+            if (x == ':') {
+                posicaoFinal += i;
+            }
+        }
+        return command.substring(posicaoInicial,posicaoFinal);
     }
 
     /**
@@ -122,8 +156,8 @@ public class Parser {
      */
     public String[] instruction(String command) {
         /* TODO: implementar */
-    	return null;
+        String[] lista = command.split("[\\s,]+");
+        return lista;
     }
-
 
 }
