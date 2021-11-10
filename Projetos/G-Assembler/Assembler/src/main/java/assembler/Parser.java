@@ -113,15 +113,15 @@ public class Parser {
      * @return somente o símbolo ou o valor número da instrução.
      */
     public String symbol(String command) {
-    	int posicaoInicial = 0;
-        int posicaoFinal = 0;
-        for (int i = 0; i <= command.length(); i++) {
+    	int posicaoInicial = -1;
+        int posicaoFinal = -1;
+        for (int i = 0; i < command.length(); i++) {
             char x = command.charAt(i);
             if (x == '$') {
-                posicaoInicial += i;
+                posicaoInicial = i + 1;
             }
             if (x == ',') {
-                posicaoFinal += i;
+                posicaoFinal = i;
             }
         }
         return command.substring(posicaoInicial,posicaoFinal);
@@ -134,12 +134,12 @@ public class Parser {
      * @return o símbolo da instrução (sem os dois pontos).
      */
     public String label(String command) {
-    	int posicaoInicial = 0;
-        int posicaoFinal = 0;
+    	int posicaoInicial = -1;
+        int posicaoFinal = -1;
         for(int i = 0; i <= command.length(); i++) {
             char x = command.charAt(i);
             if (x == ':') {
-                posicaoFinal += i;
+                posicaoFinal = i;
             }
         }
         return command.substring(posicaoInicial,posicaoFinal);
