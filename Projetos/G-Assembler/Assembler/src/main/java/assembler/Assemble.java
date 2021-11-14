@@ -20,6 +20,8 @@ public class Assemble {
     private PrintWriter outHACK = null;    // grava saida do código de máquina em Hack
     boolean debug;                         // flag que especifica se mensagens de debug são impressas
     private SymbolTable table;             // tabela de símbolos (variáveis e marcadores)
+    private Boolean nopFlag;
+    private Boolean isJump;
 
     /*
      * inicializa assembler
@@ -35,6 +37,8 @@ public class Assemble {
         outHACK    = new PrintWriter(new FileWriter(hackFile));  // Cria saída do print para
                                                                  // o arquivo hackfile
         table      = new SymbolTable();                          // Cria e inicializa a tabela de simbolos
+        nopFlag = false;
+        isJump = false;
     }
 
     /**
@@ -58,6 +62,9 @@ public class Assemble {
                 /* TODO: implementar */
                 // deve verificar se tal label já existe na tabela,
                 // se não, deve inserir. Caso contrário, ignorar.
+                if (!table.contains(label)){
+                  table.addEntry(label, romAddress);
+                }
             }
             romAddress++;
         }
@@ -78,8 +85,12 @@ public class Assemble {
                     // deve verificar se tal símbolo já existe na tabela,
                     // se não, deve inserir associando um endereço de
                     // memória RAM a ele.
+                    if(!table.contains(symbol)){
+                        table.addEntry(symbol, ramAddress);
+                    }
                 }
             }
+            ramAddress++;
         }
         parser.close();
         return table;
@@ -105,18 +116,41 @@ public class Assemble {
         while (parser.advance()){
             switch (parser.commandType(parser.command())){
                 /* TODO: implementar */
-                case C_COMMAND:
+            case C_COMMAND:
+                instruction = "";
+                String[] instructionSet = parser.instruction(parser.command());
+                String comp = Code.comp(instructionSet);
+                String dest = Code.dest(instructionSet);
+                String jump = Code.jump(instructionSet);
+                instruction += "10" + comp + dest + jump;
+                if(jump != "000"){
+                    nopFlag = true;
+                    isJump = true;
+                }
                 break;
             case A_COMMAND:
+                String symbol = parser.symbol(parser.command());
+                try{
+                    instruction = "00" + Code.toBinary(symbol);
+                } catch (Exception e){
+                    String ramAddress = table.getAddress(symbol).toString();
+                    instruction = "00" + Code.toBinary(ramAddress);
+                }
                 break;
             default:
                 continue;
             }
             // Escreve no arquivo .hack a instrução
             if(outHACK!=null) {
+                if(nopFlag && (instruction != "100000000000000000") && !isJump){
+                    outHACK.println("100000000000000000");
+                    System.out.println("Opa! Você esqueceu de colocar um nop! Mas isso já foi feito pra você no código de máquina!");
+                }
                 outHACK.println(instruction);
             }
             instruction = null;
+            isJump = false;
+            nopFlag = false;
         }
     }
 
