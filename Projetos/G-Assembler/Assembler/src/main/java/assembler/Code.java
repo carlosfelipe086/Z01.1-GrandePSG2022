@@ -16,9 +16,102 @@ public class Code {
      * @return Opcode (String de 4 bits) com código em linguagem de máquina para a instrução.
      */
     public static String dest(String[] mnemnonic) {
-        /* TODO: implementar */
-    	return "";
-    }
+        String opcode="0000";
+        int len = mnemnonic.length;
+        switch (mnemnonic[0]){
+            case "movw":
+                for (int i=2; i<len; i++){
+                    switch (mnemnonic[i]){
+                        case "%A":
+                            opcode = opcode.substring(0,3) +'1';
+                            break;
+                        case "%D" :
+                            opcode = opcode.substring(0,2) + '1' + opcode.substring(3);
+                            break;
+                        case "(%A)" :
+                            opcode = opcode.substring(0,1) + '1' + opcode.substring(2);
+                            break;
+                    }
+                }
+                break;
+            case "addw":
+                for (int i=3; i<len; i++){
+                    switch (mnemnonic[i]){
+                        case "%A":
+                            opcode= opcode.substring(0,3) + '1';
+                            break;
+                        case "%D":
+                            opcode = opcode.substring(0,2) + '1' + opcode.substring(3);
+                            break;
+                        case "(%A)":
+                            opcode = opcode.substring(0,1) + '1'+ opcode.substring(2);
+                            break;}}
+                break;
+
+
+
+            case "incw":
+            case "negw":
+            case  "notw":
+            case "decw":
+                switch (mnemnonic[1]){
+                    case "%A":
+                        opcode = opcode.substring(0,3)+ '1';
+                        break;
+                    case "%D":
+                        opcode = opcode.substring(0,2)+ '1'+ opcode.substring(3);
+                        break;
+                    case "(%A)":
+                        opcode = opcode.substring(0,1)+ '1'+ opcode.substring(2);
+                        break;}
+                break;
+            case "subw":
+                for (int i=3; i<len; i++){
+                    switch (mnemnonic[i]){
+                        case "%A":
+                            opcode = opcode.substring(0,3)+ '1';
+                            break;
+                        case "%D":
+                            opcode = opcode.substring(0,2)+ '1'+ opcode.substring(3);
+                            break;
+                        case "(%A)":
+                            opcode = opcode.substring(0,1)+ '1'+ opcode.substring(2);
+                            break;}
+                }
+            case "rsubw":
+                for (int i=3; i<len;i++){
+                    switch (mnemnonic[i]){
+                        case "%A":
+                            opcode = opcode.substring(0,3)+ '1';
+                            break;
+                        case "%D":
+                            opcode = opcode.substring(0,2)+ '1'+ opcode.substring(3);
+                            break;
+                        case "(%A)":
+                            opcode = opcode.substring(0,1)+ '1'+ opcode.substring(2);
+                            break;}}
+                break;
+            case "andw":
+            case "orw":
+                switch (mnemnonic[len-1]){
+                    case "%A":
+                        opcode = opcode.substring(0,3)+ '1';
+                        break;
+                    case "%D":
+                        opcode = opcode.substring(0,2)+ '1'+ opcode.substring(3);
+                        break;
+                    case "(%A)":
+                        opcode = opcode.substring(0,1)+ '1'+ opcode.substring(2);
+                        break;}
+                break;
+
+
+                }
+                return opcode;
+                }
+
+
+
 
     /**
      * Retorna o código binário do mnemônico para realizar uma operação de cálculo.
@@ -27,8 +120,127 @@ public class Code {
      */
     public static String comp(String[] mnemnonic) {
         /* TODO: implementar */
-    	return "";
-    }
+        switch (mnemnonic[0]){
+            case "movw":
+                if (mnemnonic[1]=="(%A)"){
+                    return "001110000";
+                }else if (mnemnonic[1]=="%A"){
+                    return "000110000";}
+                else if (mnemnonic[1]== "%D"){
+                    return "000001100";
+                }
+            case "addw" :
+                if ((mnemnonic[1]=="%A" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "%A")){
+                    return "000000010";
+                }else if ((mnemnonic[1]=="(%A)" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "(%A)")){
+                    return "001000010";
+                } else if ((mnemnonic[1]=="$1" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "$1")){
+                    return "000011111";
+                }else if ((mnemnonic[1]=="$1" && mnemnonic[2]=="%A") || (mnemnonic[1]=="%A" && mnemnonic[2]== "$1")){
+                    return "000110111";
+
+                } else if ((mnemnonic[1]=="$1" && mnemnonic[2]=="(%A)") || (mnemnonic[1]=="(%A)" && mnemnonic[2]== "$1")){
+                    return "001110111";
+                }
+            case "incw":
+                switch (mnemnonic[1]){
+                    case "%A":
+                        return "000110111";
+                    case "%D":
+                        return "000011111";
+                    case "(%A)":
+                        return "001110111";
+                }
+            case "subw":
+                if (mnemnonic[1]=="%A" && mnemnonic[2]=="%D"){
+                    return "000000111";
+
+                }else if (mnemnonic[1]=="%D" && mnemnonic[2]=="%A"){
+                    return "000010011";
+                } else if (mnemnonic[1]=="(%A)" && mnemnonic[2]=="%D"){
+                    return "001000111";
+                }
+                else if (mnemnonic[1]=="%D" && mnemnonic[2]=="(%A)"){
+                    return "001010011";
+                }else if (mnemnonic[1]=="%D" && mnemnonic[2]=="$1"){
+                    return "000001110";
+                }else if (mnemnonic[1]=="%A" && mnemnonic[2]=="$1"){
+                    return "000110010";
+                }else if (mnemnonic[1]=="(%A)" && mnemnonic[2]=="$1"){
+                    return "001110010";
+                }
+            case "decw":
+                switch (mnemnonic[1]){
+                    case "%A":
+                        return "000110010";
+                    case "(%A)":
+                        return "001110010";
+                    case "%D":
+                        return "000001110";
+                }
+            case "rsubw":
+                if (mnemnonic[1]=="%D" && mnemnonic[2]=="%A"){
+                    return "000000111";
+                } else if (mnemnonic[1]=="%A" && mnemnonic[2]=="%D"){
+                    return "000010011";
+                }else if (mnemnonic[1]=="%D" && mnemnonic[2]=="(%A)"){
+                    return "001000111";
+                }
+                else if (mnemnonic[1]=="(%A)" && mnemnonic[2]=="%D"){
+                    return "001010011";
+                }
+                else if (mnemnonic[1]=="$1" && mnemnonic[2]=="%D"){
+                    return "000001110";
+                }
+                else if (mnemnonic[1]=="$1" && mnemnonic[2]=="%A"){
+                    return "000110010";
+                }
+                else if (mnemnonic[1]=="$1" && mnemnonic[2]=="(%A)"){
+                    return "001110010";
+                }
+            case "notw":
+                switch (mnemnonic[1]){
+                    case "%A":
+                        return "000110001";
+                    case "(%A)":
+                        return "001110001";
+                    case "%D":
+                        return "000001101";
+                }
+            case "negw":
+                switch (mnemnonic[1]){
+                    case "%A":
+                        return "000110011";
+                    case "(%A)":
+                        return "001110011";
+                    case "%D":
+                        return "000001111";
+
+                }
+            case "andw":
+                if ((mnemnonic[1]=="%A" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "%A")){
+                    return "000000000";
+                }else if ((mnemnonic[1]=="(%A)" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "(%A)")){
+                    return "001000000";
+                }
+            case "orw":
+                if ((mnemnonic[1]=="%A" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "%A")){
+                    return "000010101";
+                }else if ((mnemnonic[1]=="(%A)" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "(%A)")){
+                    return "001010101";
+                }
+            case "jmp":
+            case "je":
+            case "jne":
+            case "jg":
+            case "jge":
+            case "jl":
+            case "jle":
+                return "000001100";}
+        return "000000000";
+        }
+
+    	
 
     /**
      * Retorna o código binário do mnemônico para realizar uma operação de jump (salto).
@@ -36,8 +248,20 @@ public class Code {
      * @return Opcode (String de 3 bits) com código em linguagem de máquina para a instrução.
      */
     public static String jump(String[] mnemnonic) {
-        /* TODO: implementar */
-    	return "";
+        switch (mnemnonic[0]){
+            case "jmp"  : return "111";
+            case "jge"  : return "011";
+            case "je" :   return "010";
+            case "jne" : return "101";
+            case "jg" : return "001";
+
+            case "jl" : return "100";
+            case "jle" : return "110";
+
+            default    : return "000";
+        }
+
+
     }
 
     /**
@@ -47,7 +271,14 @@ public class Code {
      */
     public static String toBinary(String symbol) {
         /* TODO: implementar */
-    	return "";
+        int dec = Integer.parseInt(symbol);
+        String bin = Integer.toBinaryString(dec);
+        String binario = "";
+        for (int i=0; i<16-bin.length();i++){
+            binario += "0";
+        }
+        binario += bin;
+    	return binario;
     }
 
 }

@@ -1,0 +1,30 @@
+# do /home/borg/.local/lib/python3.8/site-packages/vunit/sim_if/tcl_read_eval_loop.tcl
+# vsim -modelsimini /home/borg/Desktop/Psg3/Z01.1-GrandePSG2022/Projetos/F-Computador/vunit_out/modelsim/modelsim.ini -wlf /home/borg/Desktop/Psg3/Z01.1-GrandePSG2022/Projetos/F-Computador/vunit_out/test_output/lib.tb_controlunit.all_a75fe8e1779f6a1f2b60e6ef62d1d0adf3793143/modelsim/vsim.wlf -quiet -t ps -onfinish stop lib.tb_controlunit(tb) -L vunit_lib -L lib -g/tb_controlunit/runner_cfg="active python runner : true,enabled_test_cases : ,output path : /home/borg/Desktop/Psg3/Z01.1-GrandePSG2022/Projetos/F-Computador/vunit_out/test_output/lib.tb_controlunit.all_a75fe8e1779f6a1f2b60e6ef62d1d0adf3793143/,tb path : /home/borg/Desktop/Psg3/Z01.1-GrandePSG2022/Projetos/F-Computador/testes/,use_color : true" 
+# Start time: 18:57:01 on Oct 27,2021
+# ** Warning: Design size of 21687 statements exceeds ModelSim-Intel FPGA Starter Edition recommended capacity.
+# Expect performance to be adversely affected.
+# ** Error: TESTE CONCEITO B: LOAD S
+#    Time: 700 ps  Iteration: 0  Process: /tb_controlunit/main File: /home/borg/Desktop/Psg3/Z01.1-GrandePSG2022/Projetos/F-Computador/testes/tb_ControlUnit.vhd
+# Break in Process main at /home/borg/Desktop/Psg3/Z01.1-GrandePSG2022/Projetos/F-Computador/testes/tb_ControlUnit.vhd line 71
+# Stopped at /home/borg/Desktop/Psg3/Z01.1-GrandePSG2022/Projetos/F-Computador/testes/tb_ControlUnit.vhd line 71
+# 
+# Test Run Failed!
+# 
+# Stack trace result from 'tb' command
+#  /home/borg/Desktop/Psg3/Z01.1-GrandePSG2022/Projetos/F-Computador/testes/tb_ControlUnit.vhd 71 return [address 0xf6d6b9bd] Process main
+# 
+# 
+# Surrounding code from 'see' command
+#   66 :       report "TESTE CONCEITO B: LOAD S FALSO" severity error;
+#   67 : 
+#   68 :     instruction <= "10" & "0000000000100000";
+#   69 :     wait until clk = '1';
+#   70 :     assert(loadS = '1')
+# ->71 :       report "TESTE CONCEITO B: LOAD S" severity error;
+#   72 : 
+#   73 :     -- Teste: loadM
+#   74 :     instruction <= "00" & "0111111111111111";
+#   75 :     wait until clk = '1';
+# 
+# End time: 18:57:01 on Oct 27,2021, Elapsed time: 0:00:00
+# Errors: 1, Warnings: 1
