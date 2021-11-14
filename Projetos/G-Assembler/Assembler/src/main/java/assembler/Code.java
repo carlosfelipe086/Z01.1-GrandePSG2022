@@ -5,6 +5,9 @@
 
 package assembler;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Traduz mnemônicos da linguagem assembly para códigos binários da arquitetura Z0.
  */
@@ -122,26 +125,41 @@ public class Code {
         /* TODO: implementar */
         switch (mnemnonic[0]){
             case "movw":
-                if (mnemnonic[1]=="(%A)"){
-                    return "001110000";
-                }else if (mnemnonic[1]=="%A"){
-                    return "000110000";}
-                else if (mnemnonic[1]== "%D"){
-                    return "000001100";
+                switch (mnemnonic[1]) {
+                    case "%A":
+                        return "000110000";
+                    case "%D":
+                        return "000001100";
+                    case "(%A)":
+                        return "001110000";
+                    case "$1":
+                        return "000111111";
+                    case "$0":
+                        return "000101010";
+                    case "$-1":
+                        return "000111010";
                 }
+
             case "addw" :
                 if ((mnemnonic[1]=="%A" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "%A")){
                     return "000000010";
                 }else if ((mnemnonic[1]=="(%A)" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "(%A)")){
                     return "001000010";
-                } else if ((mnemnonic[1]=="$1" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "$1")){
+                }else if ((mnemnonic[1]=="$1" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "$1")){
                     return "000011111";
                 }else if ((mnemnonic[1]=="$1" && mnemnonic[2]=="%A") || (mnemnonic[1]=="%A" && mnemnonic[2]== "$1")){
                     return "000110111";
-
-                } else if ((mnemnonic[1]=="$1" && mnemnonic[2]=="(%A)") || (mnemnonic[1]=="(%A)" && mnemnonic[2]== "$1")){
+                }else if ((mnemnonic[1]=="$1" && mnemnonic[2]=="(%A)") || (mnemnonic[1]=="(%A)" && mnemnonic[2]== "$1")){
                     return "001110111";
-                }
+
+
+                }else if ((mnemnonic[1]=="$-1" && mnemnonic[2]=="(%A)") || (mnemnonic[1]=="(%A)" && mnemnonic[2]== "$-1")){
+                    return "001110010";
+                }else if ((mnemnonic[1]=="$-1" && mnemnonic[2]=="%A") || (mnemnonic[1]=="%A" && mnemnonic[2]== "$-1")){
+                    return "000110010";
+                }else if ((mnemnonic[1]=="$-1" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "$-1")){
+                    return "000001110";}
+
             case "incw":
                 switch (mnemnonic[1]){
                     case "%A":
@@ -151,16 +169,15 @@ public class Code {
                     case "(%A)":
                         return "001110111";
                 }
+
             case "subw":
                 if (mnemnonic[1]=="%A" && mnemnonic[2]=="%D"){
                     return "000000111";
-
                 }else if (mnemnonic[1]=="%D" && mnemnonic[2]=="%A"){
                     return "000010011";
-                } else if (mnemnonic[1]=="(%A)" && mnemnonic[2]=="%D"){
+                }else if (mnemnonic[1]=="(%A)" && mnemnonic[2]=="%D"){
                     return "001000111";
-                }
-                else if (mnemnonic[1]=="%D" && mnemnonic[2]=="(%A)"){
+                }else if (mnemnonic[1]=="%D" && mnemnonic[2]=="(%A)"){
                     return "001010011";
                 }else if (mnemnonic[1]=="%D" && mnemnonic[2]=="$1"){
                     return "000001110";
@@ -169,6 +186,7 @@ public class Code {
                 }else if (mnemnonic[1]=="(%A)" && mnemnonic[2]=="$1"){
                     return "001110010";
                 }
+
             case "decw":
                 switch (mnemnonic[1]){
                     case "%A":
@@ -217,18 +235,21 @@ public class Code {
                         return "000001111";
 
                 }
+
             case "andw":
-                if ((mnemnonic[1]=="%A" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "%A")){
-                    return "000000000";
-                }else if ((mnemnonic[1]=="(%A)" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "(%A)")){
+                if (mnemnonic[1]=="(%A)"){
                     return "001000000";
-                }
+
+                }else if (mnemnonic[1]!="(%A)"){
+                    return "000000000";}
+
             case "orw":
                 if ((mnemnonic[1]=="%A" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "%A")){
                     return "000010101";
                 }else if ((mnemnonic[1]=="(%A)" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "(%A)")){
                     return "001010101";
                 }
+
             case "jmp":
             case "je":
             case "jne":
@@ -237,7 +258,8 @@ public class Code {
             case "jl":
             case "jle":
                 return "000001100";}
-        return "000000000";
+
+        return "000001100";
         }
 
     	
