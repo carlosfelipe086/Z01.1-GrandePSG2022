@@ -7,7 +7,7 @@
 
  leaw $1,%A 
  movw (%A), %D
- leaw %ELSE, %A
+ leaw $ELSE, %A
  jl %D
  nop
 

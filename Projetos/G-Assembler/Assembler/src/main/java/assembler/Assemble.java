@@ -21,6 +21,8 @@ public class Assemble {
     boolean debug;                         // flag que especifica se mensagens de debug são impressas
     private SymbolTable table;             // tabela de símbolos (variáveis e marcadores)
 
+    private boolean nopFlag, jumpFlag;     //Conceito A e B
+
     /*
      * inicializa assembler
      * @param inFile
@@ -35,6 +37,9 @@ public class Assemble {
         outHACK    = new PrintWriter(new FileWriter(hackFile));  // Cria saída do print para
                                                                  // o arquivo hackfile
         table      = new SymbolTable();                          // Cria e inicializa a tabela de simbolos
+
+        this.nopFlag = false;
+        this.jumpFlag = false;
     }
 
     /**
@@ -112,6 +117,7 @@ public class Assemble {
          */
         while (parser.advance()){
             switch (parser.commandType(parser.command())){
+
                 /* TODO: implementar */
                 case C_COMMAND:
                     String[] instructionSet = parser.instruction(parser.command());
@@ -119,6 +125,11 @@ public class Assemble {
                     String dest = Code.dest(instructionSet);
                     String jump = Code.jump(instructionSet);
                     instruction = "10" + comp + dest + jump;
+
+                    if (jump != "000"){
+                        this.nopFlag = true;
+                        this.jumpFlag = true;
+                    }
 
                     break;
                 case A_COMMAND:
@@ -135,9 +146,14 @@ public class Assemble {
                 }
             // Escreve no arquivo .hack a instrução
             if(outHACK!=null) {
-
+                if (this.nopFlag && (instruction != "100000000000000000") && !this.jumpFlag){
+                    System.out.println("Faltou a instrução nop!");
+                    this.nopFlag = false;
+                }
                 outHACK.println(instruction);
             }
+            this.jumpFlag = false;
+
             instruction = null;
 
         }

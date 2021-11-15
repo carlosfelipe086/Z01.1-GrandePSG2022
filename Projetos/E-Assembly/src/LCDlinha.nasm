@@ -8,12 +8,12 @@
 
 leaw $16384, %A
 movw %A, %D
-leaw %1, %A
+leaw $1, %A
 movw %D, (%A)
 
 
 LOOP:
-leaw %1, %A
+leaw $1, %A
 movw (%A), %D
 
 movw %D, %A

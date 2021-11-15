@@ -141,24 +141,55 @@ public class Code {
                 }
 
             case "addw" :
-                if ((mnemnonic[1]=="%A" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "%A")){
-                    return "000000010";
-                }else if ((mnemnonic[1]=="(%A)" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "(%A)")){
-                    return "001000010";
-                }else if ((mnemnonic[1]=="$1" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "$1")){
-                    return "000011111";
-                }else if ((mnemnonic[1]=="$1" && mnemnonic[2]=="%A") || (mnemnonic[1]=="%A" && mnemnonic[2]== "$1")){
-                    return "000110111";
-                }else if ((mnemnonic[1]=="$1" && mnemnonic[2]=="(%A)") || (mnemnonic[1]=="(%A)" && mnemnonic[2]== "$1")){
-                    return "001110111";
-
-
-                }else if ((mnemnonic[1]=="$-1" && mnemnonic[2]=="(%A)") || (mnemnonic[1]=="(%A)" && mnemnonic[2]== "$-1")){
-                    return "001110010";
-                }else if ((mnemnonic[1]=="$-1" && mnemnonic[2]=="%A") || (mnemnonic[1]=="%A" && mnemnonic[2]== "$-1")){
-                    return "000110010";
-                }else if ((mnemnonic[1]=="$-1" && mnemnonic[2]=="%D") || (mnemnonic[1]=="%D" && mnemnonic[2]== "$-1")){
-                    return "000001110";}
+                switch (mnemnonic[1]){
+                    case "$1":
+                        switch (mnemnonic[2]){
+                            case "%A":
+                                return "000110111";
+                            case "(%A)":
+                                return "001110111";
+                            case "%D":
+                                return "000011111";
+                        }
+                    case "$-1":
+                        switch (mnemnonic[2]){
+                            case "%A":
+                                return "000110010";
+                            case "(%A)":
+                                return "001110010";
+                            case "%D":
+                                return "000001110";
+                        }
+                    case "%A":
+                        switch (mnemnonic[2]){
+                            case "%D":
+                                return "000000010";
+                            case "$1":
+                                return "000110111";
+                            case "$-1":
+                                return "000110010";
+                        }
+                    case "(%A)":
+                        switch (mnemnonic[2]){
+                            case "%D":
+                                return "001000010";
+                            case "$1":
+                                return "001110111";
+                            case "$-1":
+                                return "001110010";
+                        }
+                    case "%D":
+                        switch (mnemnonic[2]){
+                            case "%A":
+                                return "000000010";
+                            case "(%A)":
+                                return "001000010";
+                            case "$1":
+                                return "000011111";
+                            case "$-1":
+                                return "000001110";
+                        }
+                }
 
             case "incw":
                 switch (mnemnonic[1]){
@@ -171,20 +202,36 @@ public class Code {
                 }
 
             case "subw":
-                if (mnemnonic[1]=="%A" && mnemnonic[2]=="%D"){
-                    return "000000111";
-                }else if (mnemnonic[1]=="%D" && mnemnonic[2]=="%A"){
-                    return "000010011";
-                }else if (mnemnonic[1]=="(%A)" && mnemnonic[2]=="%D"){
-                    return "001000111";
-                }else if (mnemnonic[1]=="%D" && mnemnonic[2]=="(%A)"){
-                    return "001010011";
-                }else if (mnemnonic[1]=="%D" && mnemnonic[2]=="$1"){
-                    return "000001110";
-                }else if (mnemnonic[1]=="%A" && mnemnonic[2]=="$1"){
-                    return "000110010";
-                }else if (mnemnonic[1]=="(%A)" && mnemnonic[2]=="$1"){
-                    return "001110010";
+                switch (mnemnonic[1]){
+                    case "%A":
+                        switch (mnemnonic[2]){
+                            case "%D":
+                                return "000000111";
+                            case "$1":
+                                return "000110010";
+                            case "$-1":
+                                return "000110111";
+                        }
+                    case "(%A)":
+                        switch (mnemnonic[2]){
+                            case "%D":
+                                return "001000111";
+                            case "$1":
+                                return "001110010";
+                            case "$-1":
+                                return "001110111";
+                        }
+                    case "%D":
+                        switch (mnemnonic[2]){
+                            case "%A":
+                                return "000010011";
+                            case "(%A)":
+                                return "001010011";
+                            case "$1":
+                                return "000001110";
+                            case "$-1":
+                                return "000011111";
+                        }
                 }
 
             case "decw":
