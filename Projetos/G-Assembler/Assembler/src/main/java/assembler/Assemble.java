@@ -109,6 +109,7 @@ public class Assemble {
         Parser parser = new Parser(inputFile);  // abre o arquivo e aponta para o começo
         String instruction  = "";
 
+
         /**
          * Aqui devemos varrer o código nasm linha a linha
          * e gerar a string 'instruction' para cada linha
@@ -129,9 +130,11 @@ public class Assemble {
                     if (jump != "000"){
                         this.nopFlag = true;
                         this.jumpFlag = true;
-                    }
+                    } else {
+                        this.jumpFlag = false;}
 
                     break;
+
                 case A_COMMAND:
                     String symbol = parser.symbol(parser.command());
                     try{
@@ -146,13 +149,16 @@ public class Assemble {
                 }
             // Escreve no arquivo .hack a instrução
             if(outHACK!=null) {
-                if (this.nopFlag && (instruction != "100000000000000000") && !this.jumpFlag){
-                    System.out.println("Faltou a instrução nop!");
+                if (this.nopFlag && !instruction.equals("100000000000000000") && !this.jumpFlag){
+                    outHACK.println("100000000000000000");
+                    System.out.println("Faltou a instrução nop! Mas esta foi colocada!");
+                    this.nopFlag = false;
+
+                } else if (instruction.equals("100000000000000000")) {
                     this.nopFlag = false;
                 }
                 outHACK.println(instruction);
             }
-            this.jumpFlag = false;
 
             instruction = null;
 
