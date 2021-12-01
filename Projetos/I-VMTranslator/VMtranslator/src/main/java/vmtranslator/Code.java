@@ -162,6 +162,45 @@ public class Code {
 
         } else if (command.equals("lt")) {
             commands.add(String.format("; %d - LT", lineCode++));
+            commands.add("leaw $SP, %A");
+            commands.add("movw (%A), %A"); // movo o que está em SP pra A
+            commands.add("decw %A"); // decresci uma linha
+            commands.add("movw (%A), %D"); //move o que está no SP-1 para D
+            commands.add("decw %A"); // decresci outra linha
+            commands.add("movw (%A), %A"); // move o que está no SP-2 para A
+            commands.add("subw %A, %D, %D"); //subtrai para ver se dá 0
+
+            commands.add("leaw $TRUE, %A"); //
+            commands.add("jl %D");
+            commands.add("nop");
+            commands.add("leaw $SP, %A");
+            commands.add("movw (%A), %A");
+            commands.add("decw %A");
+            commands.add("decw %A");
+            commands.add("movw $0, (%A)"); // retorna false
+            commands.add("incw %A");
+            commands.add("movw %A, %D");
+            commands.add("leaw $SP, %A");
+            commands.add("movw %D, (%A)"); // mover o valor do noso SP para ele
+            commands.add("leaw $END, %A");
+            commands.add("jmp");
+            commands.add("nop");
+
+            commands.add("TRUE:");
+            commands.add("leaw $SP, %A");
+            commands.add("movw (%A), %A");
+            commands.add("decw %A");
+            commands.add("decw %A");
+            commands.add("movw $-1, (%A)"); // retorna false
+            commands.add("incw %A");
+            commands.add("movw %A, %D");
+            commands.add("leaw $SP, %A");
+            commands.add("movw %D, (%A)"); // mover o valor do noso SP para ele
+            commands.add("leaw $END, %A");
+            commands.add("jmp");
+            commands.add("nop");
+
+            commands.add("END:");
 
         } else if (command.equals("and")) {
             commands.add(String.format("; %d - AND", lineCode++));
