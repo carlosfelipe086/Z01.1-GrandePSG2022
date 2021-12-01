@@ -52,9 +52,9 @@ public class Code {
             commands.add("decw %A");
             commands.add("addw (%A), %D, %D");
             commands.add("movw %D, (%A)");
-            //commands.add("addw $1, %A, %D");
-            //commands.add("leaw $0, %A");
-            //commands.add("movw %D, (%A)");
+            commands.add("addw $1, %A, %D");
+            commands.add("leaw $0, %A");
+            commands.add("movw %D, (%A)");
 
         } else if (command.equals("sub")) {
             commands.add(String.format("; %d - SUB", lineCode++));
@@ -64,6 +64,9 @@ public class Code {
             commands.add("movw (%A), %D");
             commands.add("decw %A");
             commands.add("subw (%A), %D, %D");
+            commands.add("movw %D, (%A)");
+            commands.add("addw $1, %A, %D");
+            commands.add("leaw $0, %A");
             commands.add("movw %D, (%A)");
 
         } else if (command.equals("neg")) {
@@ -267,48 +270,262 @@ public class Code {
 
             if (segment.equals("constant")) {
                 Error.error("Não faz sentido POP com constant");
+
             } else if (segment.equals("local")) {
+                commands.add("leaw $SP, %A");                           //Carrega SP
+                commands.add("movw (%A), %D");                          //Coloca o ponteiro em D
+                commands.add("decw %D");                                //Decresce o ponteiro
+                commands.add("movw %D, (%A)");                          //Atualiza SP
+                commands.add("leaw $" + index.toString() + ",%A");      //Carrega o index do POP
+                commands.add("movw %A, %D");                            //Move o index para D
+
+                commands.add("leaw $LCL, %A");      //Carrega LOCAL
+                commands.add("movw (%A), %A");      //Move o valor da ramLOCAL para A
+                commands.add("addw %A, %D, %D");    //Soma o index com o local e salva o local de salvamento em %D
+
+                commands.add("leaw $R5, %A");       //Carrega TEMP0 em A
+                commands.add("movw %D, (%A)");      //Salva o local de acesso em temp 0
+
+                commands.add("leaw $SP, %A");       //Carrega SP
+                commands.add("movw (%A), %A");      //Coloca o ponteiro em A
+                commands.add("movw (%A), %D");      //Move o valor da RAM do ponteiro em D
+                commands.add("leaw $R5, %A");       //Carrega TEMP0
+                commands.add("movw (%A), %A");      //Coloca o local de salvamento em %A
+                commands.add("movw %D, (%A)");      //Salva %D em (%A)
 
             } else if (segment.equals("argument")) {
 
+                commands.add("leaw $SP, %A");                           //Carrega SP
+                commands.add("movw (%A), %D");                          //Coloca o ponteiro em D
+                commands.add("decw %D");                                //Decresce o ponteiro
+                commands.add("movw %D, (%A)");                          //Atualiza SP
+                commands.add("leaw $" + index.toString() + ",%A");      //Carrega o index do POP
+                commands.add("movw %A, %D");                            //Move o index para D
+
+                commands.add("leaw $ARG, %A");      //Carrega ARG
+                commands.add("movw (%A), %A");      //Move o valor da ramARG para A
+                commands.add("addw %A, %D, %D");    //Soma o index com o local e salva o local de salvamento em %D
+
+                commands.add("leaw $R5, %A");       //Carrega TEMP0 em A
+                commands.add("movw %D, (%A)");      //Salva o local de acesso em temp 0
+
+                commands.add("leaw $SP, %A");       //Carrega SP
+                commands.add("movw (%A), %A");      //Coloca o ponteiro em A
+                commands.add("movw (%A), %D");      //Move o valor da RAM do ponteiro em D
+                commands.add("leaw $R5, %A");       //Carrega TEMP0
+                commands.add("movw (%A), %A");      //Coloca o local de salvamento em %A
+                commands.add("movw %D, (%A)");      //Salva %D em (%A)
+
             } else if (segment.equals("this")) {
 
+                commands.add("leaw $SP, %A");                           //Carrega SP
+                commands.add("movw (%A), %D");                          //Coloca o ponteiro em D
+                commands.add("decw %D");                                //Decresce o ponteiro
+                commands.add("movw %D, (%A)");                          //Atualiza SP
+                commands.add("leaw $" + index.toString() + ",%A");      //Carrega o index do POP
+                commands.add("movw %A, %D");                            //Move o index para D
+
+                commands.add("leaw $THIS, %A");     //Carrega THIS
+                commands.add("movw (%A), %A");      //Move o valor da ramTHIS para A
+                commands.add("addw %A, %D, %D");    //Soma o index com o local e salva o local de salvamento em %D
+
+                commands.add("leaw $R5, %A");       //Carrega TEMP0 em A
+                commands.add("movw %D, (%A)");      //Salva o local de acesso em temp 0
+
+                commands.add("leaw $SP, %A");       //Carrega SP
+                commands.add("movw (%A), %A");      //Coloca o ponteiro em A
+                commands.add("movw (%A), %D");      //Move o valor da RAM do ponteiro em D
+                commands.add("leaw $R5, %A");       //Carrega TEMP0
+                commands.add("movw (%A), %A");      //Coloca o local de salvamento em %A
+                commands.add("movw %D, (%A)");      //Salva %D em (%A)
+
             } else if (segment.equals("that")) {
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw (%A), %D");                      //Coloca o ponteiro em D
+                commands.add("decw %D");                            //Decresce o ponteiro
+                commands.add("movw %D, (%A)");                      //Atualiza o SP
+                commands.add("leaw $" + index.toString() + ",%A");  //Carrega o index do POP
+                commands.add("movw %A, %D");                        //Move o index para D
+
+                commands.add("leaw $THAT, %A");     //Carrega THAT
+                commands.add("movw (%A), %A");      //Move o valor da ramTHAT para A
+                commands.add("addw %A, %D, %D");    //Soma o index com o local e salva o local de salvamento em %D
+
+                commands.add("leaw $R5, %A");       //Carrega TEMP0 em A
+                commands.add("movw %D, (%A)");      //Salva o local de acesso em temp 0
+
+                commands.add("leaw $SP, %A");       //Carrega SP
+                commands.add("movw (%A), %A");      //Coloca o ponteiro em A
+                commands.add("movw (%A), %D");      //Move o valor da RAM do ponteiro em D
+                commands.add("leaw $R5, %A");       //Carrega TEMP0
+                commands.add("movw (%A), %A");      //Coloca o local de salvamento em %A
+                commands.add("movw %D, (%A)");      //Salva %D em (%A)
 
             } else if (segment.equals("static")) {
 
             } else if (segment.equals("temp")) {
 
+                Integer popRam = index + 5;     //Endereco do temp que sera salvo
+
+                commands.add("leaw $SP,%A");  //Carrega SP
+                commands.add("movw (%A),%D"); //Coloca o ponteiro em D
+                commands.add("decw %D");      //Decresce o ponteiro
+                commands.add("movw %D,(%A)"); //Atualiza o SP
+                commands.add("movw (%A),%A"); //Coloca no regA a linha do SP
+                commands.add("movw (%A),%D"); //Coloca esse valor da linha em D
+
+                commands.add("leaw $" + popRam.toString() + ",%A"); //Carrega o valor do temp a ser salvo
+                commands.add("movw %D,(%A)");
+
             } else if (segment.equals("pointer")) {
+
+                commands.add("leaw $SP,%A");  //Carrega SP
+                commands.add("movw (%A),%D"); //Coloca o ponteiro em D
+                commands.add("decw %D");      //Decresce o ponteiro
+                commands.add("movw %D,(%A)"); //Atualiza o SP
+                commands.add("movw (%A),%A"); //Coloca no regA a linha do SP
+                commands.add("movw (%A),%D"); //Coloca esse valor da linha em D
+
+
                 if(index==0) {
+                    //THIS
+                    commands.add("leaw $THIS,%A");
+                    commands.add("movw %D,(%A)");
 
                 } else {
-
+                    //THAT
+                    commands.add("leaw $THAT,%A");
+                    commands.add("movw %D,(%A)");
                 }
             }
         } else if (command == Parser.CommandType.C_PUSH) {
             commands.add(String.format("; %d - PUSH %s %d", lineCode++ ,segment, index));
 
             if (segment.equals("constant")) {
+                commands.add("leaw $" + index.toString() + ", %A"); //Carrega valor da constante
+                commands.add("movw %A, %D");                        //Move a constante para %D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw (%A), %A");                      //Coloca o ponteiro em %A
+                commands.add("movw %D, (%A)");                      //Move o valor da constante para onde aponta SP
+                commands.add("incw %A");                            //Incrementa o SP
+                commands.add("movw %A, %D");                        //Coloca o ponteiro em %D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw %D, (%A)");                      //Atualiza o SP
 
             } else if (segment.equals("local")) {
+                commands.add("leaw $" + index.toString() + ", %A"); //Carrega valor do index
+                commands.add("movw %A, %D");                        //Coloca o index em %D
+
+                commands.add("leaw $LCL, %A");                      //Carrega LOCAL
+                commands.add("movw (%A), %A");                      //Valor do local para A
+                commands.add("addw %A, %D, %A");                    //Soma o index com o local para salvar o registrador do push
+                commands.add("movw (%A), %D");                      //Move esse endereço para D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw (%A), %A");                      //Coloca o ponteiro em %A
+                commands.add("movw %D, (%A)");                      //Move o valor do LOCAL para onde aponta SP
+                commands.add("incw %A");                            //Incrementa o SP
+                commands.add("movw %A, %D");                        //Coloca o ponteiro em %D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw %D, (%A)");                      //Atualiza o SP
 
             } else if (segment.equals("argument")) {
 
+                commands.add("leaw $" + index.toString() + ", %A"); //Carrega valor do index
+                commands.add("movw %A, %D");                        //Coloca o index em %D
+
+                commands.add("leaw $ARG, %A");                      //Carrega ARG
+                commands.add("movw (%A), %A");                      //Valor do ARG para A
+                commands.add("addw %A, %D, %A");                    //Soma o index com o ARG para salvar o registrador do push
+                commands.add("movw (%A), %D");                      //Move esse endereço para D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw (%A), %A");                      //Coloca o ponteiro em %A
+                commands.add("movw %D, (%A)");                      //Move o valor da ARG para onde aponta SP
+                commands.add("incw %A");                            //Incrementa o SP
+                commands.add("movw %A, %D");                        //Coloca o ponteiro em %D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw %D, (%A)");                      //Atualiza o SP
+
             } else if (segment.equals("this")) {
 
+                commands.add("leaw $" + index.toString() + ", %A"); //Carrega valor do index
+                commands.add("movw %A, %D");                        //Coloca o index em %D
+
+                commands.add("leaw $THIS, %A");                     //Carrega THIS
+                commands.add("movw (%A), %A");                      //Valor do THIS para A
+                commands.add("addw %A, %D, %A");                    //Soma o index com o ARG para salvar o registrador do push
+                commands.add("movw (%A), %D");                      //Move esse endereço para D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw (%A), %A");                      //Coloca o ponteiro em %A
+                commands.add("movw %D, (%A)");                      //Move o valor da THIS para onde aponta SP
+                commands.add("incw %A");                            //Incrementa o SP
+                commands.add("movw %A, %D");                        //Coloca o ponteiro em %D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw %D, (%A)");                      //Atualiza o SP
+
             } else if (segment.equals("that")) {
+
+                commands.add("leaw $" + index.toString() + ", %A"); //Carrega valor do index
+                commands.add("movw %A, %D");                        //Coloca o index em %D
+
+                commands.add("leaw $THAT, %A");                     //Carrega THAT
+                commands.add("movw (%A), %A");                      //Valor do THAT para A
+                commands.add("addw %A, %D, %A");                    //Soma o index com o ARG para salvar o registrador do push
+                commands.add("movw (%A), %D");                      //Move esse endereço para D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw (%A), %A");                      //Coloca o ponteiro em %A
+                commands.add("movw %D, (%A)");                      //Move o valor da THAT para onde aponta SP
+                commands.add("incw %A");                            //Incrementa o SP
+                commands.add("movw %A, %D");                        //Coloca o ponteiro em %D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw %D, (%A)");                      //Atualiza o SP
 
             } else if (segment.equals("static")) {
 
             } else if (segment.equals("temp")) {
 
+                commands.add("leaw $" + index.toString() + ",%A"); //Carrega valor do index
+                commands.add("movw %A, %D");                        //Coloca o index em %D
+
+                commands.add("leaw $R5, %A");                       //Carrega TEMP
+                commands.add("addw %A, %D, %A");                    //Soma o index com o TEMP para salvar o registrador do push
+                commands.add("movw (%A), %D");                      //Move o valor do endereco endereço para D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw (%A), %A");                      //Coloca o ponteiro em %A
+                commands.add("movw %D, (%A)");                      //Move o valor da temp para onde aponta SP
+                commands.add("incw %A");                            //Incrementa o SP
+                commands.add("movw %A, %D");                        //Coloca o ponteiro em %D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw %D, (%A)");                      //Atualiza o SP
+
             } else if (segment.equals("pointer")) {
                 if(index==0) {
-
+                    commands.add("leaw $THIS, %A");                     //Carrega THIS
                 } else {
-
+                    commands.add("leaw $THAT, %A");                     //Carrega THAT
                 }
+                commands.add("movw (%A), %D");                      //Move o valor do endereco endereço para D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw (%A), %A");                      //Coloca o ponteiro em %A
+                commands.add("movw %D, (%A)");                      //Move o valor do THIS para onde aponta SP
+                commands.add("incw %A");                            //Incrementa o SP
+                commands.add("movw %A, %D");                        //Coloca o ponteiro em %D
+
+                commands.add("leaw $SP, %A");                       //Carrega SP
+                commands.add("movw %D, (%A)");                      //Atualiza o SP
             }
         }
 
