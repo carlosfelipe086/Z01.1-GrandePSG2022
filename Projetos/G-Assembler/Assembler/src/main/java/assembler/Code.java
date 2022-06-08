@@ -297,6 +297,8 @@ public class Code {
                     return "001010101";
                 }
 
+            case "nop":
+                return "000000000";
             case "jmp":
             case "je":
             case "jne":
